@@ -1,0 +1,6 @@
+use_frameworks!
+target 'MMRequest_Tests' do
+  pod 'MMRequest', :path => '../'
+  
+  
+end
