@@ -1,0 +1,6 @@
+framework module Pods_MMRequest_Tests {
+  umbrella header "Pods-MMRequest_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
