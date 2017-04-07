@@ -1,42 +1,16 @@
-#
-# Be sure to run `pod lib lint MMRequest.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
   s.name             = 'MMRequest'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of MMRequest.'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
-  s.description      = <<-DESC
-TODO: Add long description of the pod here.
-                       DESC
-
-  s.homepage         = 'https://github.com/rainfyou@gmail.com/MMRequest'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.summary          = 'MMRequest'
+  s.homepage         = 'https://github.com/HoneyLuka/MMRequest'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'rainfyou@gmail.com' => 'rainfyou@gmail.com' }
-  s.source           = { :git => 'https://github.com/rainfyou@gmail.com/MMRequest.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-
+  s.author           = { 'Luka' => 'luka@honeyluka.com' }
+  s.source           = { :git => 'https://github.com/HoneyLuka/MMRequest.git', :tag => s.version.to_s }
+  s.social_media_url = 'https://twitter.com/rainfyou'
   s.ios.deployment_target = '8.0'
-
-  s.source_files = 'MMRequest/Classes/**/*'
-  
-  # s.resource_bundles = {
-  #   'MMRequest' => ['MMRequest/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  s.public_header_files = 'MMRequest/Classes/*.{h}'
+  s.source_files = 'MMRequest/Classes/*.{h,m}'
+  s.dependency 'AFNetworking'
+  s.dependency 'YYModel'
+  s.dependency 'PromiseKit', '~> 1.7'
 end
