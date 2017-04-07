@@ -7,8 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#if __has_include(<MMRequest/MMRequest.h>)
+#import <MMRequest/MMBaseRequest.h>
+#else
 #import "MMBaseRequest.h"
-#import "AFHTTPSessionManager.h"
+#endif
+
+#import <AFNetworking/AFNetworking.h>
 
 @interface MMRequestManager : NSObject
 

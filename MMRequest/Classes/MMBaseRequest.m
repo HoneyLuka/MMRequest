@@ -7,7 +7,12 @@
 //
 
 #import "MMBaseRequest.h"
+
+#if __has_include(<MMRequest/MMRequest.h>)
+#import <MMRequest/MMRequestManager.h>
+#else
 #import "MMRequestManager.h"
+#endif
 
 @interface MMBaseRequest ()
 

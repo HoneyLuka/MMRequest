@@ -6,7 +6,12 @@
 //  Copyright © 2016年 Shadow. All rights reserved.
 //
 
+#if __has_include(<MMRequest/MMRequest.h>)
+#import <MMRequest/MMBaseResponse.h>
+#else
 #import "MMBaseResponse.h"
+#endif
+
 #import <UIKit/UIKit.h>
 
 @class MMBaseRequest;
