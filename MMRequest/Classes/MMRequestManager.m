@@ -100,10 +100,17 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
         baseURL = @"";
     }
     
-    NSString *requestURL = [baseURL stringByAppendingPathComponent:request.requestURL];
-//    if (![requestURL hasSuffix:@"/"]) {
-//        requestURL = [requestURL stringByAppendingString:@"/"];
-//    }
+    NSString *relativeURL = request.requestURL;
+    
+    if ([baseURL hasSuffix:@"/"]) {
+        baseURL = [baseURL substringToIndex:baseURL.length - 1];
+    }
+    
+    if (relativeURL.length && baseURL.length && ![relativeURL hasPrefix:@"/"]) {
+        relativeURL = [@"/" stringByAppendingString:relativeURL];
+    }
+    
+    NSString *requestURL = [baseURL stringByAppendingString:relativeURL];
     
     NSDictionary *params = request.requestParams;
     MMRequestMethod method = request.requestMethod;
@@ -146,9 +153,9 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
     
     NSError *serializationError = nil;
     NSMutableURLRequest *requestObj = [self.manager.requestSerializer requestWithMethod:methodString
-                                                                           URLString:requestURL
-                                                                          parameters:params
-                                                                               error:&serializationError];
+                                                                              URLString:requestURL
+                                                                             parameters:params
+                                                                                  error:&serializationError];
     if (serializationError || !requestObj) {
         fail(nil, MM_REQUEST_ERROR);
         return;
@@ -169,7 +176,7 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
                     } else {
                         success(dataTask, responseObject);
                     }
-    }];
+                }];
     
     [dataTask resume];
     
