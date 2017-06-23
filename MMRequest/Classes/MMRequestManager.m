@@ -212,6 +212,7 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
         
     } @catch (NSException *exception) {
         [self requestFailed:task error:MM_REQUEST_ERROR withRequest:request];
+        return;
     }
     
     request.onFinish(request, response);
