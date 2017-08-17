@@ -172,6 +172,11 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
                                completionHandler:
                 ^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
                     if (error) {
+                        
+                        if ([MMRequestConfiguration configuration].errorPreProcess) {
+                            [MMRequestConfiguration configuration].errorPreProcess(responseObject, responseObject, error);
+                        }
+                        
                         fail(dataTask, error);
                     } else {
                         success(dataTask, responseObject);

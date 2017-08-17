@@ -11,6 +11,8 @@
 
 extern NSString * const kMMRequestGlobalSerializersDidChangedNotification;
 
+typedef void(^MMRequestErrorPreProccessCallback)(NSURLResponse *response, id responseObject, NSError *error);
+
 @interface MMRequestConfiguration : NSObject
 
 @property (nonatomic, strong) NSString *baseURL;
@@ -28,6 +30,8 @@ extern NSString * const kMMRequestGlobalSerializersDidChangedNotification;
  Default is AFJSONResponseSerializer.
  */
 @property (nonatomic, copy) AFHTTPResponseSerializer<AFURLResponseSerialization> *responseSerializer;
+
+@property (nonatomic, copy) MMRequestErrorPreProccessCallback errorPreProcess;
 
 - (void)applyGlobalSerializers;
 
