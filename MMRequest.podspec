@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'MMRequest'
-  s.version          = '0.1.5'
+  s.version          = '0.2.0'
   s.summary          = 'MMRequest'
   s.homepage         = 'https://github.com/HoneyLuka/MMRequest'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
