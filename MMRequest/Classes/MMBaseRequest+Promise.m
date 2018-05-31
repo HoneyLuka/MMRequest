@@ -15,7 +15,7 @@
     return [PMKPromise new:^(PMKFulfiller fulfill, PMKRejecter reject) {
         [self onFinish:^(MMBaseRequest *request, id response) {
             fulfill(PMKManifold(response));
-        } onError:^(MMBaseRequest *request, NSError *error) {
+        } onErrorHandle:^(MMBaseRequest *request, NSURLResponse *response, id responseObject, NSError *error) {
             reject(error);
         }];
         

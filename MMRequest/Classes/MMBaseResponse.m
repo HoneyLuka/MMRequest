@@ -10,4 +10,24 @@
 
 @implementation MMBaseResponse
 
++ (NSDictionary *)modelCustomPropertyMapper
+{
+    return nil;
+}
+
++ (NSDictionary *)modelContainerPropertyGenericClass
+{
+    return nil;
+}
+
++ (NSArray *)modelPropertyBlacklist
+{
+    return nil;
+}
+
++ (NSArray *)modelPropertyWhitelist
+{
+    return nil;
+}
+
 @end

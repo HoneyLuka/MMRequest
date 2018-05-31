@@ -26,6 +26,12 @@
     self.onError = onError;
 }
 
+- (void)onFinish:(MMRequestOnFinishBlock)onFinish onErrorHandle:(MMRequestHandleErrorBlock)onErrorHandle
+{
+    self.onFinish = onFinish;
+    self.onErrorHandle = onErrorHandle;
+}
+
 - (void)request
 {
     [[MMRequestManager globalManager]addRequest:self];
@@ -82,6 +88,11 @@
 - (Class)responseClass
 {
     return nil;
+}
+
+- (NSURLRequest *)modifyRequest:(NSMutableURLRequest *)request
+{
+    return request;
 }
 
 @end

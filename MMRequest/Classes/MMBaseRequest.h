@@ -13,10 +13,13 @@
 #endif
 
 #import <UIKit/UIKit.h>
+#import <YYModel/YYModel.h>
 
 @class MMBaseRequest;
 typedef void(^MMRequestOnFinishBlock)(MMBaseRequest *request, id response);
 typedef void(^MMRequestOnErrorBlock)(MMBaseRequest *request, NSError *error);
+
+typedef void(^MMRequestHandleErrorBlock)(MMBaseRequest *request, NSURLResponse *response, id responseObject, NSError *error);
 
 typedef NS_ENUM(NSUInteger, MMRequestMethod) {
   MMRequestMethodGet,
@@ -27,12 +30,32 @@ typedef NS_ENUM(NSUInteger, MMRequestMethod) {
   MMRequestMethodPatch,
 };
 
-@protocol MMRequestCustomProtocol <NSObject>
+@interface MMBaseRequest : NSObject
 
-@required
+@property (nonatomic, strong) NSURLSessionTask *task;
+
+@property (nonatomic, copy) MMRequestOnFinishBlock onFinish;
+@property (nonatomic, copy) MMRequestOnErrorBlock onError __attribute__((deprecated("use onErrorHandle instead")));
+
+@property (nonatomic, copy) MMRequestHandleErrorBlock onErrorHandle;
+
+- (void)onFinish:(MMRequestOnFinishBlock)onFinish onError:(MMRequestOnErrorBlock)onError __attribute__((deprecated("use onFinish:onErrorHandle: instead")));
+
+- (void)onFinish:(MMRequestOnFinishBlock)onFinish onErrorHandle:(MMRequestHandleErrorBlock)onErrorHandle;
+
+- (BOOL)isRequesting;
+
+/**
+ Request in global manager immediately.
+ */
+- (void)request;
+
+- (void)cancel;
+
+#pragma mark - Subclass override
+
 - (NSString *)requestURL;
 
-@optional
 - (NSDictionary *)requestParams;
 
 /**
@@ -45,10 +68,9 @@ typedef NS_ENUM(NSUInteger, MMRequestMethod) {
  */
 - (MMRequestMethod)requestMethod;
 
-
 /**
  If you want to modify request before sending, implement this method.
-
+ 
  @return Request you want to send.
  */
 - (NSURLRequest *)modifyRequest:(NSMutableURLRequest *)request;
@@ -62,25 +84,5 @@ typedef NS_ENUM(NSUInteger, MMRequestMethod) {
  Default is YES.
  */
 - (BOOL)isValid;
-
-@end
-
-@interface MMBaseRequest : NSObject <MMRequestCustomProtocol>
-
-@property (nonatomic, strong) NSURLSessionTask *task;
-
-@property (nonatomic, copy) MMRequestOnFinishBlock onFinish;
-@property (nonatomic, copy) MMRequestOnErrorBlock onError;
-
-- (void)onFinish:(MMRequestOnFinishBlock)onFinish onError:(MMRequestOnErrorBlock)onError;
-
-- (BOOL)isRequesting;
-
-/**
- Request in global manager immediately.
- */
-- (void)request;
-
-- (void)cancel;
 
 @end

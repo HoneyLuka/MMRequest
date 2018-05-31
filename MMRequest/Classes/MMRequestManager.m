@@ -15,8 +15,8 @@ const NSInteger kMMRequestErrorCode = -666666;
 
 #define MM_REQUEST_ERROR [NSError errorWithDomain:kMMRequestErrorDomain code:kMMRequestErrorCode userInfo:nil]
 
-typedef void(^MMRequestManagerSuccessBlock)(NSURLSessionDataTask * _Nonnull, id _Nullable);
-typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull);
+typedef void(^MMRequestManagerSuccessBlock)(NSURLSessionDataTask *task, NSURLResponse *response, id responseObject);
+typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask *task, NSURLResponse *response, id responseObject, NSError  *error);
 
 @interface MMRequestManager ()
 
@@ -87,7 +87,7 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
 - (void)addRequest:(MMBaseRequest *)request
 {
     if (![self requestIsValid:request]) {
-        [self requestFailed:nil error:MM_REQUEST_ERROR withRequest:request];
+        [self requestFailed:nil response:nil responseObject:nil error:MM_REQUEST_ERROR withRequest:nil];
         return;
     }
     
@@ -116,12 +116,12 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
     MMRequestMethod method = request.requestMethod;
     
     __weak typeof(self) weakSelf = self;
-    MMRequestManagerSuccessBlock success = ^(NSURLSessionDataTask *task, id responseObject) {
-        [weakSelf requestSuccess:task responseObject:responseObject withRequest:request];
+    MMRequestManagerSuccessBlock success = ^(NSURLSessionDataTask *task, NSURLResponse *response, id responseObject) {
+        [weakSelf requestSuccess:task response:response responseObject:responseObject withRequest:request];
     };
     
-    MMRequestManagerFailBlock fail = ^(NSURLSessionDataTask *task, NSError *error) {
-        [weakSelf requestFailed:task error:error withRequest:request];
+    MMRequestManagerFailBlock fail = ^(NSURLSessionDataTask *task, NSURLResponse *response, id responseObject, NSError  *error) {
+        [weakSelf requestFailed:task response:response responseObject:responseObject error:error withRequest:request];
     };
     
     NSString *methodString = @"";
@@ -157,7 +157,7 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
                                                                              parameters:params
                                                                                   error:&serializationError];
     if (serializationError || !requestObj) {
-        fail(nil, MM_REQUEST_ERROR);
+        fail(nil, nil, nil, MM_REQUEST_ERROR);
         return;
     }
     
@@ -177,9 +177,9 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
                             [MMRequestConfiguration configuration].errorPreProcess(response, responseObject, error);
                         }
                         
-                        fail(dataTask, error);
+                        fail(dataTask, response, responseObject, error);
                     } else {
-                        success(dataTask, responseObject);
+                        success(dataTask, response, responseObject);
                     }
                 }];
     
@@ -189,10 +189,11 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
 }
 
 - (void)requestSuccess:(NSURLSessionDataTask *)task
+              response:(NSURLResponse *)response
         responseObject:(id)responseObject
            withRequest:(MMBaseRequest *)request
 {
-    id response = nil;
+    id convertedResponseObject = nil;
     
     @try {
         request.task = nil;
@@ -208,36 +209,38 @@ typedef void(^MMRequestManagerFailBlock)(NSURLSessionDataTask * _Nullable, NSErr
             return;
         }
         
-        response = [responseClass yy_modelWithDictionary:responseObject];
-        
-        if (!response) {
-            [self requestFailed:task error:MM_REQUEST_ERROR withRequest:request];
-            return;
-        }
-        
+        convertedResponseObject = [responseClass yy_modelWithDictionary:responseObject];
     } @catch (NSException *exception) {
-        [self requestFailed:task error:MM_REQUEST_ERROR withRequest:request];
+        [self requestFailed:task
+                   response:response
+             responseObject:responseObject
+                      error:MM_REQUEST_ERROR
+                withRequest:request];
         return;
     }
     
-    request.onFinish(request, response);
+    request.onFinish(request, convertedResponseObject);
 }
 
 - (void)requestFailed:(NSURLSessionDataTask *)task
+             response:(NSURLResponse *)response
+       responseObject:(id)responseObject
                 error:(NSError *)error
           withRequest:(MMBaseRequest *)request
 {
     request.task = nil;
     
-    if (!request.onError) {
-        return;
-    }
-    
     if (error.code == NSURLErrorCancelled) {
         return;
     }
     
-    request.onError(request, error);
+    if (request.onError) {
+        request.onError(request, error);
+    }
+    
+    if (request.onErrorHandle) {
+        request.onErrorHandle(request, response, responseObject, error);
+    }
 }
 
 - (void)cancelAllRequests

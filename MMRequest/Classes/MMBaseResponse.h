@@ -7,19 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <YYModel/YYModel.h>
 
-@protocol MMResponseCustomProtocol <YYModel>
+@interface MMBaseResponse : NSObject
 
-@optional
 + (NSDictionary *)modelCustomPropertyMapper;
 + (NSDictionary *)modelContainerPropertyGenericClass;
 
 + (NSArray *)modelPropertyBlacklist;
 + (NSArray *)modelPropertyWhitelist;
-
-@end
-
-@interface MMBaseResponse : NSObject <MMResponseCustomProtocol>
 
 @end
